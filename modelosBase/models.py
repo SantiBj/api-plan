@@ -6,6 +6,13 @@ from usuarioBase.models import Instructor
 class Programa(models.Model):
     nombre = models.CharField(max_length=200)
 
+    class Meta:
+        verbose_name = "programa"
+        verbose_name_plural = "programas"
+
+    def __str__(self):
+        return self.nombre
+
 class Ficha(models.Model):
     numero = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=150)
@@ -15,6 +22,8 @@ class Ficha(models.Model):
         verbose_name = "ficha"
         verbose_name_plural = "fichas"
 
+    def __str__(self):
+        return self.numero+" | "+self.nombre
 
 class Competencia(models.Model):
     nombre = models.CharField(max_length=200)

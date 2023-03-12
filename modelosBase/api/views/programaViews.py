@@ -10,7 +10,8 @@ class ProgramaListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return Programa.objects.all()
-    
+
+''' -> puede ir
 class ProgramaCreateAPIView(generics.CreateAPIView):
     def post(self, request):
         programa = ProgramaSerializer(data=request.data)
@@ -18,3 +19,4 @@ class ProgramaCreateAPIView(generics.CreateAPIView):
             programa.save()
             return Response(programa.data,status=status.HTTP_201_CREATED)
         return Response(programa.errors,status=status.HTTP_406_NOT_ACCEPTABLE)
+'''
