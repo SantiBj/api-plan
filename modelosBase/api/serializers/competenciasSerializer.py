@@ -4,4 +4,4 @@ from modelosBase.models import Competencia
 class CompetenciasSerializers(serializers.ModelSerializer):
     class Meta:
         model = Competencia
-        fields = '__all__'
+        fields = ('pk','nombre')

@@ -23,12 +23,12 @@ class Ficha(models.Model):
         verbose_name_plural = "fichas"
 
     def __str__(self):
-        return self.numero+" | "+self.nombre
+        return str(self.numero)+" | "+self.nombre
 
 class Competencia(models.Model):
     nombre = models.CharField(max_length=200)
     programa = models.ForeignKey(Programa,on_delete=models.CASCADE) #hace referencia a todos los adsi
-    instructor = models.ManyToManyField(Instructor)
+    instructores = models.ManyToManyField(Instructor)
 
     class Meta:
         verbose_name= 'competencia'
