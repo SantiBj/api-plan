@@ -31,6 +31,7 @@ def anadirInstructorACompetencia(request):
         instructor = Instructor.objects.get(documento=request.data["docInstructor"])
         try:
             competencia.instructores.add(instructor)
+            competencia.save()
             return Response({"mensaje":"se añadio con exito el instructor a la competencia"},status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"mensaje":"Error al añadir el instructor a la competencia", "error": str(e)},status=status.HTTP_400_BAD_REQUEST)
