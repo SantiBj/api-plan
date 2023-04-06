@@ -1,14 +1,18 @@
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAdminUser
 from modelosBase.models import Competencia
 from usuarioBase.models import Instructor
 from modelosBase.api.serializers.competenciasSerializer import CompetenciasSerializers
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import permissions
 # ver competencias por ficha que pertenece a un programa
 
 # sirve pasar todos los campos para ver los instructores asignados
 class CompetenciasProgramaListAPIView(generics.ListAPIView):
+
+    permission_classes = [permissions.IsAdminUser]
 
     def get(self,request, pkPrograma):
 
@@ -21,10 +25,11 @@ class CompetenciasProgramaListAPIView(generics.ListAPIView):
         if len(competencias) > 0:
             competenciasSerializer = CompetenciasSerializers(competencias,many=True)
             return Response(competenciasSerializer.data,status=status.HTTP_200_OK)
-        return Response({"mensaje":"No hay competencias para este programa"},status=status.HTTP_404_NOT_FOUND)
+        return Response([],status=status.HTTP_404_NOT_FOUND)
     
 #añadir un instructor a una competencia
 @api_view(["POST",])
+@permission_classes([IsAdminUser])
 def anadirInstructorACompetencia(request):
     if request.method == 'POST':
         competencia = Competencia.objects.get(pk = request.data["pkCompetencia"])

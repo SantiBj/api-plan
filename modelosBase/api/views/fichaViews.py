@@ -3,6 +3,7 @@ from modelosBase.api.serializers.fichaSerializer import FichaSerializer,CrearFic
 from modelosBase.models import Ficha
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import permissions
 
 #crear 
 #eliminar
@@ -10,6 +11,7 @@ from rest_framework import status
 
 # fichas pertencientes a un programa
 class FichasProgramaListAPIView(generics.ListAPIView):
+    permission_classes = [permissions.IsAdminUser]
     queryset = Ficha.objects.all()
 
     # recibe un id
@@ -23,6 +25,7 @@ class FichasProgramaListAPIView(generics.ListAPIView):
         return Response({"mensage":"El programa existe"},status=status.HTTP_404_NOT_FOUND)
 
 class FichaCreateAPIView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = CrearFichaSerializer
 
 

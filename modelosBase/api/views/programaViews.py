@@ -3,9 +3,12 @@ from modelosBase.api.serializers.programaSerializer import ProgramaSerializer
 from modelosBase.models import Programa
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import permissions
+
 
 # ver programas
 class ProgramaListAPIView(generics.ListAPIView):
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = ProgramaSerializer
 
     def get_queryset(self):

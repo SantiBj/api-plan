@@ -9,6 +9,6 @@ urlpatterns = [
     path("competencias/programa/<int:pkPrograma>/",CompetenciasProgramaListAPIView.as_view()),
     path("fichasprograma/<int:pk>/",FichasProgramaListAPIView.as_view()),
     path("ficha/crear/",FichaCreateAPIView.as_view()),
-    path("raps/competencia/<int:pkCompetencia>/<int:numeroficha>",RapSinAsignarDeCompetenciaListAPIView.as_view()),
+    path("raps/competencia/<int:pkCompetencia>/<int:numeroficha>/",RapSinAsignarDeCompetenciaListAPIView.as_view()),
     path("anadirinstructor/",anadirInstructorACompetencia)
 ]

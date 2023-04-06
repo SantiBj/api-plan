@@ -1,18 +1,33 @@
 from datetime import timedelta
 from datetime import datetime
-from django.db.models import Q
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
-from .instructorSerializers import ListaInstructoresSerializer,CrearInstructorSerializer
+from .instructorSerializers import InstructorSerializer,ListaInstructoresSerializer,CrearInstructorSerializer
 from usuarioBase.models import Instructor
 from modelosBase.models import Competencia
 from asignaciones.models import AsignacionesRap
+from rest_framework import permissions
+from rest_framework.authtoken.models import Token
 
-# instructores disponibles en una fecha
+
+#instructor por documento
+class InstructoresRetriveAPIView(generics.RetrieveAPIView):
+
+    def get(self,request,pk):
+        instructor = Instructor.objects.get(documento = pk)
+
+        if (instructor):
+            serializer = InstructorSerializer(instructor)
+
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 class InstructoresListAPIView(generics.ListAPIView):
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = ListaInstructoresSerializer
 
     #consulta
@@ -23,6 +38,7 @@ class InstructoresListAPIView(generics.ListAPIView):
 
 
 class CrearInstructorCreateAPIView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = CrearInstructorSerializer
 
 
@@ -33,22 +49,31 @@ class CrearInstructorCreateAPIView(generics.CreateAPIView):
             serializer.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response({"mensaje":"Datos invalidos"},status=status.HTTP_406_NOT_ACCEPTABLE)
-    
 
-# devolver instructores disponibles para una fehca y que puedan dictar una competencia
+@api_view(['DELETE'])
+def salir(request):  
+    Token.objects.get(user=request.user).delete() #eliminando el token del usuario al salir
+    return Response(status=status.HTTP_200_OK)
+
+# devolver instructores disponibles para una fecha y que puedan dictar una competencia
 @api_view(['POST',])
+@permission_classes([IsAdminUser])
 def instructoresDisponiblesFecha(request):
     if request.method == 'POST':
 
         data = request.data
+
+        '''
+        fechaInicial
+        idCompetencia
+        fechaFin
+        '''
 
         fechaInicioUser = datetime.strptime(
             data['fechaInicial'], '%Y-%m-%d').date()
         idCompetencia = data['idCompetencia']
         fecha_finUser = datetime.strptime(data['fechaFin'], '%Y-%m-%d').date()
         duracionRap = fecha_finUser-fechaInicioUser
-
-        #333333333333333333333333333333333333333333333
 
         instructoresOcupados = AsignacionesRap.objects.filter(
             fechaInicio__gte = fechaInicioUser,
@@ -99,4 +124,7 @@ def instructoresDisponiblesFecha(request):
                 instructoresLibres.append(instructor)
             
         serializer = ListaInstructoresSerializer(instructoresLibres,many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        if serializer.data:
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response([],status=status.HTTP_404_NOT_FOUND)
+

@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from usuarioBase.models import Instructor
 
+class InstructorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Instructor
+        fields= ("documento","nombreCompleto","is_staff")
+
 class ListaInstructoresSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor
@@ -13,7 +18,6 @@ class CrearInstructorSerializer(serializers.ModelSerializer):
 
     # editando el metodo save para que encripte la contraseña
     def create(self, validated_data):
-        print(validated_data)
         instructor = Instructor(**validated_data)#asignando la data a cada atributo
         instructor.set_password(validated_data["password"])
         instructor.save()

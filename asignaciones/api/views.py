@@ -1,16 +1,20 @@
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from .serializer import AsignacionesRapSerializer,CrearAsignacionSerializer
 from asignaciones.models import AsignacionesRap
 from datetime import date,timedelta
+from rest_framework import permissions
+
 
 # crear asignar
 # fechas de las asignaciones de una ficha
 
 class CrearAsignacionCreateAPIView(generics.CreateAPIView):
 
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = CrearAsignacionSerializer
 
     def post(self,request):
@@ -32,6 +36,7 @@ class asignacionesInstructorListAPIView(generics.ListAPIView):
         return Response(asignacionesSerializer.data,status=status.HTTP_200_OK)
 
 class asignacionesFichaListAPIView(generics.ListAPIView):
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = AsignacionesRapSerializer
 
     def get(self,request,pkFicha):
@@ -44,6 +49,7 @@ class asignacionesFichaListAPIView(generics.ListAPIView):
 # serializar y sacar las fechas
 # en cada onchange del input se valida que no se este intentando asignar en una de estas fechas
 @api_view(['GET',])
+@permission_classes([IsAdminUser])
 def fechasAsignadasFicha(request,pkFicha):
     hoy = date.today()
 
