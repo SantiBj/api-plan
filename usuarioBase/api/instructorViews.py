@@ -17,11 +17,10 @@ from rest_framework.authtoken.models import Token
 class InstructoresRetriveAPIView(generics.RetrieveAPIView):
 
     def get(self,request,pk):
-        instructor = Instructor.objects.get(documento = pk)
+        instructor = Instructor.objects.filter(documento = pk)
 
         if (instructor):
-            serializer = InstructorSerializer(instructor)
-
+            serializer = InstructorSerializer(instructor,many=True)
             return Response(serializer.data,status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -38,6 +37,13 @@ class InstructoresListAPIView(generics.ListAPIView):
 
 
 class CrearInstructorCreateAPIView(generics.CreateAPIView):
+#     {
+#     "documento": 10,
+#     "password": "10",
+#     "is_superuser": true,
+#     "nombreCompleto": "10",
+#     "is_staff": true
+# }
     permission_classes = [permissions.IsAdminUser]
     serializer_class = CrearInstructorSerializer
 
@@ -60,9 +66,7 @@ def salir(request):
 @permission_classes([IsAdminUser])
 def instructoresDisponiblesFecha(request):
     if request.method == 'POST':
-
         data = request.data
-
         '''
         fechaInicial
         idCompetencia
@@ -116,6 +120,7 @@ def instructoresDisponiblesFecha(request):
         #instructores libres
         instructoresLibres = []
 
+        #trayendo los instructores que pueden dictar la competencia --de la tabla intermedia
         competencia = Competencia.objects.get(pk=idCompetencia)
         instructoresCompetencia = competencia.instructores.all().values('documento','nombreCompleto')
 
