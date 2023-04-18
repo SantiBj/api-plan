@@ -9,7 +9,22 @@ from rest_framework import status
 from rest_framework import permissions
 from .Pagination import Pagination
 
-# ver competencias por ficha que pertenece a una titulada
+#buscador competencia
+class BuscadorCompetencias(generics.ListAPIView):
+    permission_classes = [permissions.IsAdminUser]
+    queryset = Competencia.objects.all()
+    pagination_class= Pagination
+
+    def get(self,request):
+        busqueda = self.request.query_params.get('search',None)
+        consulta = Competencia.objects.filter(nombre__icontains=busqueda)
+
+        page= self.paginate_queryset(consulta)
+
+        if(consulta):
+            serializer = CompetenciasSerializers(page,many=True)
+            return self.get_paginated_response(serializer.data)
+        return Response("no hay competencias", status=status.HTTP_404_NOT_FOUND)
 
 class CompetenciasList(generics.ListAPIView):
     permission_classes=[permissions.IsAdminUser]
