@@ -9,27 +9,45 @@ from rest_framework import status
 from rest_framework import permissions
 from .Pagination import Pagination
 
-#buscador competencia
+# datos de una competencia
+
+
+class CompetenciaRetrieve(generics.RetrieveAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = CompetenciasSerializers
+
+    def get(self, request, pk):
+        competencia = Competencia.objects.get(pk=int(pk))
+
+        if competencia:
+            serializer = CompetenciasSerializers(competencia)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response("la competencia no existe", status=status.HTTP_404_NOT_FOUND)
+
+# buscador competencia
+
+
 class BuscadorCompetencias(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser]
     queryset = Competencia.objects.all()
-    pagination_class= Pagination
+    pagination_class = Pagination
 
-    def get(self,request):
-        busqueda = self.request.query_params.get('search',None)
+    def get(self, request):
+        busqueda = self.request.query_params.get('search', None)
         consulta = Competencia.objects.filter(nombre__icontains=busqueda)
 
-        page= self.paginate_queryset(consulta)
+        page = self.paginate_queryset(consulta)
 
-        if(consulta):
-            serializer = CompetenciasSerializers(page,many=True)
+        if (consulta):
+            serializer = CompetenciasSerializers(page, many=True)
             return self.get_paginated_response(serializer.data)
         return Response("no hay competencias", status=status.HTTP_404_NOT_FOUND)
 
+
 class CompetenciasList(generics.ListAPIView):
-    permission_classes=[permissions.IsAdminUser]
-    queryset=Competencia.objects.all()
-    serializer_class=CompetenciasSerializers
+    permission_classes = [permissions.IsAdminUser]
+    queryset = Competencia.objects.all()
+    serializer_class = CompetenciasSerializers
     pagination_class = Pagination
 
 
