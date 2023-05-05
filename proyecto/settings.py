@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-5hnxnfu90*^a&2ay!=f4-5ve699!%ldyrlm&ih(p2t^2gqc2(7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# estos seran las direcciones para acceder a la api 
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.5']
 
 
 # Application definition
@@ -142,10 +143,12 @@ AUTH_USER_MODEL = 'usuarioBase.Instructor'
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
+    "http://192.168.1.5:5173",
 ]
 
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:5173",
+    "http://192.168.1.5:5173",
 ]
 
 REST_FRAMEWORK = {

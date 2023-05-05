@@ -41,6 +41,7 @@ class BuscadorInstructor(generics.ListAPIView):
 
 # instructor por documento
 class InstructoresRetriveAPIView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, pk):
         instructor = Instructor.objects.filter(documento=pk)
@@ -49,6 +50,11 @@ class InstructoresRetriveAPIView(generics.RetrieveAPIView):
             serializer = InstructorSerializer(instructor, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class InstructorDestroy(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAdminUser]
+    queryset = Instructor.objects.all()
 
 
 class InstructoresListAPIView(generics.ListAPIView):
@@ -66,7 +72,7 @@ class CrearInstructorCreateAPIView(generics.CreateAPIView):
     #     "nombreCompleto": "10",
     #     "is_staff": true
     # }
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = CrearInstructorSerializer
 
     def post(self, request):
