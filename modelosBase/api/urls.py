@@ -1,12 +1,14 @@
 from django.urls import path
 from .views.tituladaViews import TituladaListAPIView
-from .views.competenciaView import CompetenciaRetrieve, BuscadorCompetencias, CompetenciasTituladaListAPIView, anadirInstructorACompetencia, CompetenciasList
+from .views.competenciaView import DeleteCompetenciaInstructor,CompetenciasInstructorList,CompetenciaRetrieve, BuscadorCompetencias, CompetenciasTituladaListAPIView, anadirInstructorACompetencia, CompetenciasList
 from .views.fichaViews import FichaDestroy, FichasTituladaListAPIView, FichaCreateAPIView, FichaTituladaBuscador, FichasListAPIView, FichaBuscador, FichaRetrieve
 from .views.rapViews import RapSinAsignarDeCompetenciaListAPIView
 
 urlpatterns = [
     path("programa/", TituladaListAPIView.as_view()),
     path("buscador/competencias/", BuscadorCompetencias.as_view()),
+    path("DELInsCom/<int:documento>/<int:pk>/",DeleteCompetenciaInstructor.as_view()),
+    path("competencias-instructor/<int:documento>/",CompetenciasInstructorList.as_view()),
     path("competencia/<int:pk>/", CompetenciaRetrieve.as_view()),
     path("competencias/", CompetenciasList.as_view()),
     path("competencias/programa/<int:pk>/",

@@ -1,6 +1,6 @@
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser,AllowAny
 from modelosBase.models import Competencia, Titulada
 from usuarioBase.models import Instructor
 from modelosBase.api.serializers.competenciasSerializer import CompetenciasSerializers
@@ -71,16 +71,51 @@ class CompetenciasTituladaListAPIView(generics.ListAPIView):
 
 
 # añadir un instructor a una competencia
+#################################################corregir los permisos para que no cualquiera pueda acceder
 @api_view(["POST",])
-@permission_classes([IsAdminUser])
+@permission_classes([AllowAny])
 def anadirInstructorACompetencia(request):
     if request.method == 'POST':
-        competencia = Competencia.objects.get(pk=request.data["pkCompetencia"])
+        print(request.data)
+        competencia = Competencia.objects.get(pk=int(request.data["pkCompetencia"]))
         instructor = Instructor.objects.get(
-            documento=request.data["docInstructor"])
+            documento=int(request.data["docInstructor"]))
         try:
             competencia.instructores.add(instructor)
             competencia.save()
             return Response({"mensaje": "se añadio con exito el instructor a la competencia"}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"mensaje": "Error al añadir el instructor a la competencia", "error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class CompetenciasInstructorList(generics.ListAPIView):
+
+    permission_classes=[permissions.AllowAny]
+
+    def get(self, request,documento):  
+        #consultar el instructor y luego sus competencias
+        instructor = Instructor.objects.get(documento = documento)
+
+        competencias = instructor.competencia_set.all()
+
+        if (len(competencias)>0):
+            serializer = CompetenciasSerializers(competencias,many=True)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response([],status=status.HTTP_404_NOT_FOUND)
+    
+class DeleteCompetenciaInstructor(generics.DestroyAPIView):
+
+    permission_classes = [permissions.AllowAny]
+
+    def delete(self,request,documento,pk):
+        try:
+            instructor = Instructor.objects.get(documento=documento)
+            #obteniendo el registro de la tabla intermedia
+            # obteniendo la relacion entre el instructor y la competencia para eliminar este registro
+            #en get se pasa el id de la competencia a trae
+            competencia = instructor.competencia_set.get(id = pk)
+            #eliminando el registro o relacion a la tabla intermedia
+            instructor.competencia_set.remove(competencia)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body>
+    <div class="relative">
+      <img
+        class="w-full h-[180px]"
+        src="https://i.postimg.cc/4xG0bDfK/ola.jpg"
+        alt=""
+      />
+      <div class="absolute top-0 text-white w-full px-[10%] bg-Black">
+        <div class="mt-[30px] flex justify-between items-center">
+          <div>
+            <h1 class="text-[30px] font-bold">Informe Asignaciones</h1>
+            {% if ficha %}
+            <p class="text-[18px] font-medium">
+              Ficha: {{ ficha.nombre }}
+            </p>
+            <p>Numero: {{ ficha.numero }}</p>
+            {% else %}
+            <p class="text-[18px] font-medium">
+              Instructor: {{ instructor.nombreCompleto }}
+            </p>
+            <p>Documento: {{ instructor.documento }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <img src="https://i.postimg.cc/2j7mp71B/plan.png" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-[80%] mx-auto">
+      <div class="mt-[70px]">
+        <p>
+          <span class="font-semibold text-[20px]">Fecha:</span>
+          <span>({{ fechaInicio }}) al ({{ fechaFin }})</span>
+        </p>
+        <div class="w-[100px] h-[3px] bg-[#00AD00]"></div>
+      </div>
+      <div class="relative mt-[30px]">
+        <table class="w-full text-sm text-left text-gray-500">
+          <thead class="text-xs text-gray-700 uppercase bg-[#00AD00]">
+            <tr>
+              <th scope="col" class="px-6 py-3">Rap</th>
+              {% if ficha %}
+              <th scope="col" class="px-6 py-3">Instructor</th>
+              {% else %}
+              <th scope="col" class="px-6 py-3">Ficha</th>
+              {% endif %}
+              <th scope="col" class="px-6 py-3">Fecha Inicio</th>
+              <th scope="col" class="px-6 py-3">Fecha Fin</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for asignacion in asignaciones %}
+            <tr class="bg-white border-b">
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900">
+                {{ asignacion.rap }}
+              </th>
+              {% if ficha %}
+              <td class="px-6 py-4">{{ asignacion.instructor }}</td>
+              {% else %}
+              <td class="px-6 py-4">{{ asignacion.ficha }}</td>
+              {% endif %}
+              <td class="px-6 py-4">{{ asignacion.fechaInicio }}</td>
+              <td class="px-6 py-4">{{ asignacion.fechaFin }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
