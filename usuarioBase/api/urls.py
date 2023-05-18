@@ -1,8 +1,9 @@
 from django.urls import path
-from .instructorViews import InstructorDestroy,BuscadorInstructor,salir,instructoresDisponiblesFecha,InstructoresListAPIView,CrearInstructorCreateAPIView,InstructoresRetriveAPIView
+from .instructorViews import NombreInstructor,InstructorDestroy,BuscadorInstructor,salir,instructoresDisponiblesFecha,InstructoresListAPIView,CrearInstructorCreateAPIView,InstructoresRetriveAPIView
 
 urlpatterns=[
     path("instructores/",InstructoresListAPIView.as_view()),
+    path("update/instructor/<int:id>/",NombreInstructor.as_view()),
     path("eliminarInstructor/<int:pk>/",InstructorDestroy.as_view()),
     path("busqueda/instructores/",BuscadorInstructor.as_view()),
     path("instructor/crear/",CrearInstructorCreateAPIView.as_view()),

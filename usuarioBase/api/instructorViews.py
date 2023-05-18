@@ -15,7 +15,22 @@ from rest_framework.authtoken.models import Token
 from modelosBase.api.views.Pagination import Pagination
 
 # buscador instructor por nombre o documento
+class NombreInstructor(generics.UpdateAPIView):
+    permission_classes=[permissions.AllowAny]
+    serializer_class = CrearInstructorSerializer
 
+    #obtiene instructor a actualizar
+    def get_object(self):
+        #capturar el id de la url
+        user_id = self.kwargs['id']
+        return Instructor.objects.get(documento=user_id)
+
+    #recibe los datos a actualizar -> serializer
+    #recibe la instancia o objeto obtenido anteriormente
+    def perform_update(self, serializer):
+        #guarda los cambios
+        serializer.save()
+        
 
 class BuscadorInstructor(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser]
