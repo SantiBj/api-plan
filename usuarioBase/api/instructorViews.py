@@ -56,7 +56,7 @@ class BuscadorInstructor(generics.ListAPIView):
 
 # instructor por documento
 class InstructoresRetriveAPIView(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
         instructor = Instructor.objects.filter(documento=pk)
