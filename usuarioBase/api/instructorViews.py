@@ -14,9 +14,9 @@ from rest_framework import permissions
 from rest_framework.authtoken.models import Token
 from modelosBase.api.views.Pagination import Pagination
 
-# buscador instructor por nombre o documento
+
 class NombreInstructor(generics.UpdateAPIView):
-    permission_classes=[permissions.AllowAny]
+    permission_classes=[permissions.IsAdminUser]
     serializer_class = CrearInstructorSerializer
 
     #obtiene instructor a actualizar
@@ -31,7 +31,7 @@ class NombreInstructor(generics.UpdateAPIView):
         #guarda los cambios
         serializer.save()
         
-
+# buscador instructor por nombre o documento
 class BuscadorInstructor(generics.ListAPIView):
     permission_classes = [permissions.IsAdminUser]
     queryset = Instructor.objects.all()
@@ -175,7 +175,9 @@ def instructoresDisponiblesFecha(request):
             if not instructor["documento"] in id_instructoresOcupados:
                 instructoresLibres.append(instructor)
 
-        serializer = ListaInstructoresSerializer(instructoresLibres, many=True)
+        Paginacion = Pagination()
+        paginacion_data = Paginacion.paginate_queryset(instructoresLibres,request)
+        serializer = ListaInstructoresSerializer(paginacion_data, many=True)
         if serializer.data:
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Paginacion.get_paginated_response(serializer.data)
         return Response([], status=status.HTTP_404_NOT_FOUND)

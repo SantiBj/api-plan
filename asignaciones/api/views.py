@@ -20,7 +20,7 @@ from django.db.models import Q
 # informes
 
 class ReportFicha(generics.ListAPIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAdminUser]
     queryset = AsignacionesRap.objects.all()
     serializer_class = AsignacionesRap
 
@@ -55,7 +55,7 @@ class ReportFicha(generics.ListAPIView):
         return response
 
 class Report(generics.ListAPIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAdminUser]
     queryset = AsignacionesRap.objects.all()
     serializer_class = AsignacionesRap
 
@@ -122,6 +122,39 @@ class asignacionesFichaListAPIView(generics.ListAPIView):
         asignacionesSerializer = AsignacionesRapSerializer(asignacionesFicha,many=True)
         return Response(asignacionesSerializer.data,status=status.HTTP_200_OK)
         
+#lista de asignaciones cuya fecha de finalizacion sea mayor a hoy
+#ficha
+class AsignacionesActivasFichas(generics.ListAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = AsignacionesRapSerializer
+
+    def get(self, request, *args, **kwargs):
+        hoy = date.today()
+        asignaciones = AsignacionesRap.objects.filter(Q(ficha=self.kwargs["ficha"])&Q(fechaFin__gte=hoy)).order_by("fechaInicio")
+        serializer = AsignacionesRapSerializer(asignaciones,many=True)
+        if len(serializer.data) > 0:
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+#instructor
+
+class AsignacionesActivasInstructor(generics.ListAPIView):
+    permission_classes=[permissions.AllowAny]
+    serializer_class = AsignacionesRapSerializer
+
+    def get(self, request, *args, **kwargs):
+        hoy = date.today()
+        asignaciones = AsignacionesRap.objects.filter(Q(instructor=self.kwargs["doc"])
+                                                      &Q(fechaFin__gte=hoy))
+        serializer = AsignacionesRapSerializer(asignaciones,many=True)
+        if len(serializer.data) > 0:
+            return Response(serializer.data,status=status.HTTP_200_OK) 
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+#eliminar asignacion por <int:id> 
+class DeleteAsignacion(generics.DestroyAPIView):
+    permission_classes = [permissions.AllowAny]
+    queryset = AsignacionesRap.objects.all()
+
 
 # serializar y sacar las fechas
 # en cada onchange del input se valida que no se este intentando asignar en una de estas fechas

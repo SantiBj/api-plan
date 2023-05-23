@@ -10,8 +10,6 @@ from rest_framework import permissions
 from .Pagination import Pagination
 
 # datos de una competencia
-
-
 class CompetenciaRetrieve(generics.RetrieveAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = CompetenciasSerializers
@@ -73,7 +71,7 @@ class CompetenciasTituladaListAPIView(generics.ListAPIView):
 # añadir un instructor a una competencia
 #################################################corregir los permisos para que no cualquiera pueda acceder
 @api_view(["POST",])
-@permission_classes([AllowAny])
+@permission_classes([IsAdminUser])
 def anadirInstructorACompetencia(request):
     if request.method == 'POST':
         print(request.data)
@@ -89,7 +87,7 @@ def anadirInstructorACompetencia(request):
 
 class CompetenciasInstructorList(generics.ListAPIView):
 
-    permission_classes=[permissions.AllowAny]
+    permission_classes=[permissions.IsAdminUser]
 
     def get(self, request,documento):  
         #consultar el instructor y luego sus competencias
@@ -104,7 +102,7 @@ class CompetenciasInstructorList(generics.ListAPIView):
     
 class DeleteCompetenciaInstructor(generics.DestroyAPIView):
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAdminUser]
 
     def delete(self,request,documento,pk):
         try:
