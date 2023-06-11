@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-5hnxnfu90*^a&2ay!=f4-5ve699!%ldyrlm&ih(p2t^2gqc2(7
 DEBUG = True
 
 # estos seran las direcciones para acceder a la api 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.5']
+ALLOWED_HOSTS = ['https://esupportcolombia.com','127.0.0.1', 'localhost', '192.168.1.5']
 RENDER_EXTERNAL_HOSTNAME= os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 
 if RENDER_EXTERNAL_HOSTNAME:
@@ -151,11 +151,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'usuarioBase.Instructor'
 
 CORS_ALLOWED_ORIGINS = [
+    "https://esupportcolombia.com",
     "http://127.0.0.1:5173",
     "http://192.168.1.5:5173",
 ]
 
 CORS_ORIGIN_WHITELIST = [
+    "https://esupportcolombia.com",
     "http://127.0.0.1:5173",
     "http://192.168.1.5:5173",
 ]
