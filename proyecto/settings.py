@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,11 @@ DEBUG = True
 
 # estos seran las direcciones para acceder a la api 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.5']
+RENDER_EXTERNAL_HOSTNAME: os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
 
 
 # Application definition
@@ -49,6 +55,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -91,7 +98,9 @@ DATABASES = {
 # DATABASES = {
 #         'default': {
 #             'ENGINE': 'django.db.backends.mysql',
-#             'NAME': 'cron',
+#             'NAME': 'plan_',
+#             'USER':'root',
+#             'PASSWORD':'2605',
 #             'HOST': 'localhost',
 #             'PORT': '3306',
 #         }

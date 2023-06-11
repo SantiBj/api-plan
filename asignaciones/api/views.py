@@ -13,7 +13,7 @@ from django.shortcuts import render
 from usuarioBase.models import Instructor
 from modelosBase.models import Ficha
 from django.db.models import Q
-
+from .tokenPDF import user,password
 
 
 
@@ -47,7 +47,7 @@ class ReportFicha(generics.ListAPIView):
         #obteniendo el html con .content
         html = render(request,"index.html",context).content
 
-        client = pdfcrowd.HtmlToPdfClient('plan','a1172f72a7e1220d462b5a6293422d41')
+        client = pdfcrowd.HtmlToPdfClient(user,password)
         pdf_file = client.convertString(html)
         
         response = HttpResponse(pdf_file,content_type='application/pdf')
@@ -80,7 +80,7 @@ class Report(generics.ListAPIView):
 
         html = render(request,"index.html",context).content
 
-        client = pdfcrowd.HtmlToPdfClient('plan','a1172f72a7e1220d462b5a6293422d41')
+        client = pdfcrowd.HtmlToPdfClient(user,password)
         pdf_file = client.convertString(html)
         
         response = HttpResponse(pdf_file,content_type='application/pdf')
