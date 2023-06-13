@@ -17,6 +17,11 @@ from modelosBase.api.views.Pagination import Pagination
 
 class Inicio_sesion(ObtainAuthToken):
     def post(self,request):
+        try:
+            documento = int(request.data["username"])
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
@@ -38,7 +43,7 @@ class Inicio_sesion(ObtainAuthToken):
             "token": str(makeToken),
             "documento": str(user.documento),
             "nombreCompleto": str(user.nombreCompleto),
-            "isAdmin": str(user.is_staff)
+            "isAdmin": bool(user.is_staff)
         })
     
 @api_view(['DELETE'])
