@@ -38,7 +38,7 @@ class Inicio_sesion(ObtainAuthToken):
             "token": str(makeToken),
             "documento": str(user.documento),
             "nombreCompleto": str(user.nombreCompleto),
-            "isAdmin": str(user.is_staff)
+            "isAdmin": bool(user.is_staff)
         })
     
 @api_view(['DELETE'])
