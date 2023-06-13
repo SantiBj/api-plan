@@ -3,17 +3,59 @@ from django.db.models import Q
 from datetime import datetime
 from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .instructorSerializers import InstructorSerializer, ListaInstructoresSerializer, CrearInstructorSerializer
-from usuarioBase.models import Instructor
+from usuarioBase.models import Instructor,Sesion
 from modelosBase.models import Competencia
 from asignaciones.models import AsignacionesRap
 from rest_framework import permissions
 from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken 
 from modelosBase.api.views.Pagination import Pagination
 
+class Inicio_sesion(ObtainAuthToken):
+    def post(self,request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        try:
+            #si hay token se suma mas uno al registro 
+            token = Token.objects.get(user=user)
+            sesion = Sesion.objects.get(user=user)
+            if (sesion.sesiones == 5):
+                return Response(status=status.HTTP_429_TOO_MANY_REQUESTS)
+            sesion.sesiones = sesion.sesiones+1
+            sesion.save()
+        except:
+            # si no hay token se crea el registro
+            sesion = Sesion(user=user)
+            sesion.save()
+            
+        makeToken = Token.objects.get_or_create(user=user)[0]
+        return Response({
+            "token": str(makeToken),
+            "documento": str(user.documento),
+            "nombreCompleto": str(user.nombreCompleto),
+            "isAdmin": str(user.is_staff)
+        })
+    
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def salir(request):
+    # eliminando el token del usuario al salir
+    sesion = Sesion.objects.get(user=request.user)
+
+    if(sesion.sesiones == 1):
+        sesion.delete()
+        Token.objects.get(user=request.user).delete()
+    else:
+        sesion.sesiones = sesion.sesiones-1
+        sesion.save()
+
+    
+    return Response(status=status.HTTP_200_OK)
 
 class NombreInstructor(generics.UpdateAPIView):
     permission_classes=[permissions.IsAdminUser]
@@ -98,12 +140,6 @@ class CrearInstructorCreateAPIView(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({"mensaje": "Datos invalidos"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-
-@api_view(['DELETE'])
-def salir(request):
-    # eliminando el token del usuario al salir
-    Token.objects.get(user=request.user).delete()
-    return Response(status=status.HTTP_200_OK)
 
 # devolver instructores disponibles para una fecha y que puedan dictar una competencia
 

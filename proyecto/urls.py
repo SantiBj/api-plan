@@ -21,6 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include("modelosBase.api.urls")),
     path('api/',include("usuarioBase.api.urls")),
-    path('api/',include("asignaciones.api.urls")),
-    path('get-token/',obtain_auth_token)
+    path('api/',include("asignaciones.api.urls"))
 ]

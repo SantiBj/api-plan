@@ -38,3 +38,11 @@ class Instructor(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.nombreCompleto
+    
+class Sesion(models.Model):
+    user = models.OneToOneField(Instructor,unique=True,on_delete=models.CASCADE,verbose_name="user_id")
+    sesiones = models.IntegerField(verbose_name="cant_sesiones",default=1) 
+
+    class Meta:
+        verbose_name="sesion"
+        verbose_name_plural="sesiones"
