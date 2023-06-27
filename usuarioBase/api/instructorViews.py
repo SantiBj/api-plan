@@ -65,18 +65,21 @@ def salir(request):
 class NombreInstructor(generics.UpdateAPIView):
     permission_classes=[permissions.IsAdminUser]
     serializer_class = CrearInstructorSerializer
-
+     
     #obtiene instructor a actualizar
-    def get_object(self):
-        #capturar el id de la url
-        user_id = self.kwargs['id']
-        return Instructor.objects.get(documento=user_id)
+    def patch(self,request,id):
+        try:
+            documento = int(id)
+            newName = request.data['nombreCompleto']
+            instructor = Instructor.objects.get(documento=documento)
+            instructor.nombreCompleto = newName
+            instructor.save()
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
 
-    #recibe los datos a actualizar -> serializer
-    #recibe la instancia o objeto obtenido anteriormente
-    def perform_update(self, serializer):
-        #guarda los cambios
-        serializer.save()
+        
+
         
 # buscador instructor por nombre o documento
 class BuscadorInstructor(generics.ListAPIView):
