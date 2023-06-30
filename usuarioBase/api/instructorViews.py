@@ -29,7 +29,7 @@ class Inicio_sesion(ObtainAuthToken):
             #si hay token se suma mas uno al registro 
             token = Token.objects.get(user=user)
             sesion = Sesion.objects.get(user=user)
-            if (sesion.sesiones == 1):
+            if (sesion.sesiones == 3):
                 return Response(status=status.HTTP_429_TOO_MANY_REQUESTS)
             sesion.sesiones = sesion.sesiones+1
             sesion.save()
